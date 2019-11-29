@@ -14,8 +14,9 @@ const getAllAccounts = (request, response) => {
 }
 
 const getAccountsBiggerThan = (request, response) => {
+    var balanceVal = request.query.balance
     DbService((db) => {
-        AccountService.getAccountsBiggerThan(db, (document) => {
+        AccountService.getAccountsBiggerThan(balanceVal, db, (document) => {
             response.json(document)
         })
     })
@@ -23,39 +24,55 @@ const getAccountsBiggerThan = (request, response) => {
 
 const getAccountsSmallerThan = (request, response) => {
     DbService((db) => {
-        AccountService.getAccountsSmallerThan(db, (document) => {
+        var balanceVal = request.query.balance
+        AccountService.getAccountsSmallerThan(balanceVal, db, (document) => {
             response.json(document)
         })
     })
 }
 
 const addMoney = (request, response) => {
+
+    var accountName = request.body.name
+    var balanceIncrease = parseFloat(request.body.balance)
+    
     DbService((db) => {
-        AccountService.addMoney(db, (document) => {
+        AccountService.addMoney(db, accountName, balanceIncrease, (document) => {
             response.json(document)
         })
     })
 }
 
 const removeMoney = (request, response) => {
+
+    var accountName = request.body.name
+    var balanceDecrease = parseFloat(request.body.balance)
+
     DbService((db) => {
-        AccountService.removeMoney(db, (document) => {
+        AccountService.removeMoney(db, accountName, balanceDecrease, (document) => {
             response.json(document)
         })
     })
 }
 
 const createAccount = (request, response) => {
+
+    var name = request.body.name
+    var balance = request.body.balance
+
     DbService((db) => {
-        AccountService.createAccount(db, (document) => {
+        AccountService.createAccount(name, balance, db, (document) => {
             response.json(document)
         })
     })
 }
 
 const deleteAccount = (request, response) => {
+
+    let name = request.params.name
+
     DbService((db) => {
-        AccountService.deleteAccount(db, (document) => {
+        AccountService.deleteAccount(name, db, (document) => {
             response.json(document)
         })
     })

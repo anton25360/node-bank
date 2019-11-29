@@ -18,6 +18,7 @@ var getAccountsSmallerThan = (balanceVal, db, callback) => {
 
 var addMoney = (db, accountName, balanceChange, callback) => {
     db.collection('accounts').updateOne({ name: accountName }, { $inc: { "balance": balanceChange } }, (err, docs) => {
+        
         callback(docs)
     })
 }
@@ -46,6 +47,7 @@ var createAccount = (name, balance, db, callback) => {
 
 var deleteAccount = (name, db, callback) => {
     db.collection('accounts').deleteOne({ "name": name }, (err, docs) => {
+        
         callback(docs)
     })
 }

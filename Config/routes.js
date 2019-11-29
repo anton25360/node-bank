@@ -1,27 +1,28 @@
 const AccountController = require('../Controllers/AccountController');
 
 //pass the whole application into this function
+//Don't forget to select GET / POST / PUT / DELETE
 const routes = (app) => {
 
-    //get all accounts
+    //eg: http://localhost:3000/
     app.get('/', AccountController.getAllAccounts)
 
-    //get accounts bigger than a certain balance
+    // eg: http://localhost:3000/biggerThan?balance=1000
     app.get('/biggerThan', AccountController.getAccountsBiggerThan)
 
-    //get accounts smaller than a certain balance
+    // eg: http://localhost:3000/smallerThan?balance=1000
     app.get('/smallerThan', AccountController.getAccountsSmallerThan)
 
-    //add money to an account
+    //eg: {"name":"Alex", "balance":"100"} -> JSON body
     app.put('/addMoney', AccountController.addMoney)
 
-    //remove money from an account
+    //eg: {"name":"Alex", "balance":"100"} -> JSON body
     app.put('/removeMoney', AccountController.removeMoney)
 
-    //create new account
+    //eg: {"name":"Alex", "balance":"100"} -> JSON body
     app.post('/', AccountController.createAccount)
 
-    //delete an account
+    //eg: http://localhost:3000/Alexa
     app.delete('/:name', AccountController.deleteAccount)
 }
 
