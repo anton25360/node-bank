@@ -1,5 +1,6 @@
 //bring in all the services that this controller needs to work
 const AccountService = require('../Services/AccountService');
+const DbService = require('../Services/DbService');
 
 //the controller links services to the route
 //controller handles the req + sets the response
