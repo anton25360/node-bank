@@ -5,7 +5,10 @@ var getAllAccounts = (db, callback) => {
 }
 
 var getAccountsBiggerThan = (balanceVal, db, callback) => {
+    
     db.collection('accounts').find({ balance: { $gte: balanceVal } }).toArray((err, docs) => {
+        console.log(err);
+        
         callback(docs)
     })
 }

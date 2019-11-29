@@ -1,5 +1,9 @@
 const AccountController = require('../Controllers/AccountController');
 
+//TODO CREATE AXCCOUNT WITH INTEGER BALANCE
+//TODO FIX BIGGER OR SMALLER THAN GET ACCOUNTS
+
+
 //pass the whole application into this function
 //Don't forget to select GET / POST / PUT / DELETE
 const routes = (app) => {
