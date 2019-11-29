@@ -12,6 +12,45 @@ var getAccountsFromDB = (db, callback) => {
     })
 }
 
+var getBalanceBiggerThan = (balanceVal, db, callback) => {
+    db.collection('accounts').find( { balance: {$gte:balanceVal} } ).toArray((err, docs) => {
+        callback(docs)
+    })
+}
+
+var getBalanceSmallerThan = (balanceVal, db, callback) => {
+    db.collection('accounts').find( { balance: {$lte:balanceVal}} ).toArray((err, docs) => {
+        callback(docs)
+    })
+}
+
+var changeBalance = (db, accountName, balanceChange, callback) => {
+    var collection = db.collection('accounts')
+
+    //get current balance
+     var currentBalance = collection.findOne({'name':accountName}, (err, docs) => {
+        return currentBalance = (docs['balance']);
+    })
+
+    var calculation = parseFloat(currentBalance) + parseFloat(balanceChange)
+    console.log(calculation);
+    console.log(currentBalance);
+    console.log(balanceChange);
+    
+    
+
+    //if currentBalance + balanceChange < 0 then BREAK else continue
+    if ((currentBalance + balanceChange) < 0) {
+        console.log('going below 0');
+    } else {
+        console.log('still got money in the bank!!');
+    }
+
+    collection.updateOne({name: accountName}, {$inc: {"balance": balanceChange}}, (err, docs) => {
+        callback(docs)
+    })
+}
+
 var insertAccountInDB = (name, balance, db, callback) => {
     db.collection('accounts').insertOne({"name":name, "balance":balance}, (err, docs) => {
         callback(docs)
@@ -24,7 +63,7 @@ var removeFromDB = (name, db, callback) => {
     })
 }
 
-//get all account
+//get all accounts
 app.get('/', function (request, response) {
     MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         console.log('connection successful')
@@ -32,6 +71,70 @@ app.get('/', function (request, response) {
 
         //eg: GET + http://localhost:3000/
         getAccountsFromDB(db, (documentsReturned) => {
+            response.json(documentsReturned)
+        })
+        client.close()
+    })
+})
+
+//get accounts bigger than a certain balance
+app.get('/biggerThan', function (request, response) {
+
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        console.log('connection successful')
+        let db = client.db('bank')
+        let balance = parseFloat(request.query.balance)
+
+        // eg: GET + http://localhost:3000/biggerThan?balance=1000 -> more than 100
+        getBalanceBiggerThan(balance, db, (documentsReturned) => {
+            response.json(documentsReturned)
+        })
+        client.close()
+    })
+})
+
+//get accounts smaller than a certain balance
+app.get('/smallerThan', function (request, response) {
+
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        console.log('connection successful')
+        let db = client.db('bank')
+        let balance = parseFloat(request.query.balance)
+
+        // eg: GET + http://localhost:3000/smallerThan?balance=1000 -> less than 100
+        getBalanceSmallerThan(balance, db, (documentsReturned) => {
+            response.json(documentsReturned)
+        })
+        client.close()
+    })
+})
+
+//add money to an account
+app.put('/addMoney', jsonParser, (request, response) => {
+    //{"name":"Alex", "balance":"100"} -> JSON
+    const accountName = request.body.name
+    const balanceIncrease = parseFloat(request.body.balance)
+
+    MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+        let db = client.db('bank')
+
+        changeBalance(db, accountName, balanceIncrease, (documentsReturned) => {
+            response.json(documentsReturned)
+        })
+        client.close()
+    })
+})
+
+//remove money from an account
+app.put('/removeMoney', jsonParser, (request, response) => {
+    //{"name":"Alex", "balance":"100"} -> JSON
+    const accountName = request.body.name
+    const balanceIncrease = parseFloat('-' + request.body.balance)
+
+    MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+        let db = client.db('bank')
+
+        changeBalance(db, accountName, balanceIncrease, (documentsReturned) => {
             response.json(documentsReturned)
         })
         client.close()
