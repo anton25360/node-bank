@@ -46,7 +46,7 @@ const addMoney = (request, response) => {
 const removeMoney = (request, response) => {
 
     var accountName = request.body.name
-    var balanceDecrease = parseFloat(request.body.balance)
+    var balanceDecrease = parseFloat('-'+request.body.balance)
 
     DbService((db) => {
         AccountService.removeMoney(db, accountName, balanceDecrease, (document) => {
