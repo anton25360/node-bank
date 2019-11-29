@@ -13,52 +13,48 @@ var getAccountsFromDB = (db, callback) => {
 }
 
 var getBalanceBiggerThan = (balanceVal, db, callback) => {
-    db.collection('accounts').find( { balance: {$gte:balanceVal} } ).toArray((err, docs) => {
+    db.collection('accounts').find({ balance: { $gte: balanceVal } }).toArray((err, docs) => {
         callback(docs)
     })
 }
 
 var getBalanceSmallerThan = (balanceVal, db, callback) => {
-    db.collection('accounts').find( { balance: {$lte:balanceVal}} ).toArray((err, docs) => {
+    db.collection('accounts').find({ balance: { $lte: balanceVal } }).toArray((err, docs) => {
         callback(docs)
     })
 }
 
-var changeBalance = (db, accountName, balanceChange, callback) => {
-    var collection = db.collection('accounts')
+var increaseBalance = (db, accountName, balanceChange, callback) => {
 
-    //get current balance
-     var currentBalance = collection.findOne({'name':accountName}, (err, docs) => {
-        return currentBalance = (docs['balance']);
-    })
-
-    var calculation = parseFloat(currentBalance) + parseFloat(balanceChange)
-    console.log(calculation);
-    console.log(currentBalance);
-    console.log(balanceChange);
-    
-    
-
-    //if currentBalance + balanceChange < 0 then BREAK else continue
-    if ((currentBalance + balanceChange) < 0) {
-        console.log('going below 0');
-    } else {
-        console.log('still got money in the bank!!');
-    }
-
-    collection.updateOne({name: accountName}, {$inc: {"balance": balanceChange}}, (err, docs) => {
+    db.collection('accounts').updateOne({ name: accountName }, { $inc: { "balance": balanceChange } }, (err, docs) => {
         callback(docs)
     })
+}
+
+var decreaseBalance = (db, accountName, balanceChange, callback) => {
+    var collection = db.collection('accounts')
+
+    //decrease the balance
+    collection.updateOne({ name: accountName }, { $inc: { "balance": balanceChange } }, (err, docs) => {
+        callback(docs)
+    })
+
+    //get current balance
+    var balanceCalculation = collection.findOne({ 'name': accountName }, (err, docs) => {
+        var currentBalance = (docs['balance']);
+        return currentBalance
+    })
+    
 }
 
 var insertAccountInDB = (name, balance, db, callback) => {
-    db.collection('accounts').insertOne({"name":name, "balance":balance}, (err, docs) => {
+    db.collection('accounts').insertOne({ "name": name, "balance": balance }, (err, docs) => {
         callback(docs)
     })
 }
 
 var removeFromDB = (name, db, callback) => {
-    db.collection('accounts').deleteOne({"name":name}, (err, docs) => {
+    db.collection('accounts').deleteOne({ "name": name }, (err, docs) => {
         callback(docs)
     })
 }
@@ -115,10 +111,10 @@ app.put('/addMoney', jsonParser, (request, response) => {
     const accountName = request.body.name
     const balanceIncrease = parseFloat(request.body.balance)
 
-    MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         let db = client.db('bank')
 
-        changeBalance(db, accountName, balanceIncrease, (documentsReturned) => {
+        increaseBalance(db, accountName, balanceIncrease, (documentsReturned) => {
             response.json(documentsReturned)
         })
         client.close()
@@ -131,10 +127,10 @@ app.put('/removeMoney', jsonParser, (request, response) => {
     const accountName = request.body.name
     const balanceIncrease = parseFloat('-' + request.body.balance)
 
-    MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true}, (err, client) => {
+    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         let db = client.db('bank')
 
-        changeBalance(db, accountName, balanceIncrease, (documentsReturned) => {
+        decreaseBalance(db, accountName, balanceIncrease, (documentsReturned) => {
             response.json(documentsReturned)
         })
         client.close()
@@ -142,7 +138,7 @@ app.put('/removeMoney', jsonParser, (request, response) => {
 })
 
 //create new account
-app.post('/', jsonParser, function(request, response) {
+app.post('/', jsonParser, function (request, response) {
     MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         let name = request.body.name
         let balance = request.body.balance
@@ -167,7 +163,7 @@ app.delete('/:name', (request, response) => {
             response.json(documentsReturned)
         })
         client.close()
-    }) 
+    })
 })
 
 app.listen(3000)
