@@ -1,4 +1,4 @@
-const TodosController = require('../Controllers/ToDosController');
+const AccountController = require('../Controllers/AccountController');
 
 //pass the whole application into this function
 const routes = (app) => {
@@ -16,7 +16,7 @@ const routes = (app) => {
     app.put('/addMoney', AccountController.addMoney)
 
     //remove money from an account
-    app.put('/removeMoney', AccountController.addMoney)
+    app.put('/removeMoney', AccountController.removeMoney)
 
     //create new account
     app.post('/', AccountController.createAccount)
