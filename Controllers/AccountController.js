@@ -58,7 +58,7 @@ const removeMoney = (request, response) => {
 const createAccount = (request, response) => {
 
     var name = request.body.name
-    var balance = request.body.balance
+    var balance = parseFloat(request.body.balance)
 
     DbService((db) => {
         AccountService.createAccount(name, balance, db, (document) => {

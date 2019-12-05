@@ -1,15 +1,13 @@
 const AccountController = require('../Controllers/AccountController');
 
-//TODO CREATE AXCCOUNT WITH INTEGER BALANCE
 //TODO FIX BIGGER OR SMALLER THAN GET ACCOUNTS
-
 
 //pass the whole application into this function
 //Don't forget to select GET / POST / PUT / DELETE
 const routes = (app) => {
 
-    //eg: http://localhost:3000/
-    app.get('/', AccountController.getAllAccounts)
+    //eg: http://localhost:3000/accounts
+    app.get('/accounts', AccountController.getAllAccounts)
 
     // eg: http://localhost:3000/biggerThan?balance=1000
     app.get('/biggerThan', AccountController.getAccountsBiggerThan)
