@@ -1,6 +1,6 @@
-# react-bank
-A bank app built with node.js, React, and MongoDB.
+# node-bank
+A banking app backend built with node.js, and MongoDB.
 
 # Setup
 1. Run `npm init` to install the required dependencies.
-2. Run `nodemon start.js` and go to www.localhost:3000
+2. Run `nodemon start.js` to start the db.
